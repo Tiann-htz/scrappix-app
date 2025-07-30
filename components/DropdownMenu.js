@@ -1,6 +1,7 @@
 // components/DropdownMenu.js
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../auth/AuthContext';
 
 export default function DropdownMenu({ visible, onClose }) {
@@ -34,8 +35,13 @@ export default function DropdownMenu({ visible, onClose }) {
       <TouchableOpacity style={styles.backdrop} onPress={onClose} />
       <View style={styles.dropdown}>
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>{user?.fullName}</Text>
-          <Text style={styles.userEmail}>{user?.email}</Text>
+          <View style={styles.userHeader}>
+            <Ionicons name="person-circle" size={40} color="#28a745" />
+            <View style={styles.userDetails}>
+              <Text style={styles.userName}>{user?.fullName}</Text>
+              <Text style={styles.userEmail}>{user?.email}</Text>
+            </View>
+          </View>
         </View>
 
         <View style={styles.divider} />
@@ -47,7 +53,7 @@ export default function DropdownMenu({ visible, onClose }) {
             onClose();
           }}
         >
-          <Text style={styles.menuIcon}>⚙️</Text>
+          <Ionicons name="settings" size={18} color="#666" style={styles.menuIcon} />
           <Text style={styles.menuText}>Profile Settings</Text>
         </TouchableOpacity>
 
@@ -55,7 +61,7 @@ export default function DropdownMenu({ visible, onClose }) {
           style={styles.menuItem}
           onPress={handleLogout}
         >
-          <Text style={styles.menuIcon}>🚪</Text>
+          <Ionicons name="log-out" size={18} color="#666" style={styles.menuIcon} />
           <Text style={styles.menuText}>Logout</Text>
         </TouchableOpacity>
       </View>
@@ -81,20 +87,28 @@ const styles = StyleSheet.create({
     right: 20,
     marginTop: 35,
     backgroundColor: 'white',
-    borderRadius: 8,
+    borderRadius: 12,
     padding: 10,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 4,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    minWidth: 200,
+    shadowRadius: 6,
+    elevation: 8,
+    minWidth: 220,
   },
   userInfo: {
     padding: 10,
+  },
+  userHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  userDetails: {
+    marginLeft: 12,
+    flex: 1,
   },
   userName: {
     fontSize: 16,
@@ -102,28 +116,27 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   userEmail: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#666',
     marginTop: 2,
   },
   divider: {
     height: 1,
     backgroundColor: '#eee',
-    marginVertical: 5,
+    marginVertical: 8,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
-    borderRadius: 5,
+    padding: 12,
+    borderRadius: 8,
   },
   menuIcon: {
-    fontSize: 16,
-    marginRight: 10,
+    marginRight: 12,
     width: 20,
   },
   menuText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#333',
   },
 });

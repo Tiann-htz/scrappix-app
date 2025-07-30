@@ -19,38 +19,13 @@ export default function ImagePreviewModal({
   onClose, 
   imageUri, 
   imageSource,
-  imageType, // 'scan' or 'repurpose'
   onSubmit 
 }) {
   const handleSubmit = () => {
-    console.log(`${imageType === 'scan' ? 'Scanning' : 'Uploading repurposed'} image:`, imageUri);
+    console.log('Scanning image:', imageUri);
     console.log('Image source:', imageSource); // 'camera' or 'gallery'
     onSubmit();
     onClose();
-  };
-
-  const getModalTitle = () => {
-    if (imageType === 'scan') {
-      return 'Preview - Scan Material';
-    } else {
-      return 'Preview - Upload Creation';
-    }
-  };
-
-  const getSubmitButtonText = () => {
-    if (imageType === 'scan') {
-      return 'Scan Material';
-    } else {
-      return 'Upload Creation';
-    }
-  };
-
-  const getMessageText = () => {
-    if (imageType === 'scan') {
-      return 'This image will be analyzed to identify the material and provide recycling recommendations.';
-    } else {
-      return 'This creation will be added to your portfolio and can be shared in the marketplace.';
-    }
   };
 
   return (
@@ -65,7 +40,7 @@ export default function ImagePreviewModal({
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Ionicons name="close" size={24} color="#333" />
           </TouchableOpacity>
-          <Text style={styles.title}>{getModalTitle()}</Text>
+          <Text style={styles.title}>Preview - Scan Material</Text>
           <View style={styles.placeholder} />
         </View>
 
@@ -75,7 +50,9 @@ export default function ImagePreviewModal({
           </View>
 
           <View style={styles.messageContainer}>
-            <Text style={styles.messageText}>{getMessageText()}</Text>
+            <Text style={styles.messageText}>
+              This image will be analyzed to identify the material and provide repurposing recommendations.
+            </Text>
           </View>
         </ScrollView>
 
@@ -84,14 +61,8 @@ export default function ImagePreviewModal({
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity 
-            style={[
-              styles.submitButton, 
-              imageType === 'scan' ? styles.scanButton : styles.uploadButton
-            ]} 
-            onPress={handleSubmit}
-          >
-            <Text style={styles.submitButtonText}>{getSubmitButtonText()}</Text>
+          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+            <Text style={styles.submitButtonText}>Scan Material</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -185,12 +156,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',
-  },
-  scanButton: {
     backgroundColor: '#4CAF50',
-  },
-  uploadButton: {
-    backgroundColor: '#FF9800',
   },
   submitButtonText: {
     fontSize: 16,

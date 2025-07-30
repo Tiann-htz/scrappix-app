@@ -4,6 +4,7 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import RepurposeMaterialPopup from './RepurposeMaterialPopup';
 import ImagePreviewModal from './ImagePreviewModal';
+import RepurposePreviewModal from './RepurposePreviewModal';
 
 export default function RepurposeMaterialButton() {
   const [showPopup, setShowPopup] = useState(false);
@@ -31,10 +32,27 @@ export default function RepurposeMaterialButton() {
     setImageSource(null);
   };
 
-  const handleSubmit = () => {
-    console.log('Repurposed material uploaded successfully!');
-    // Future: Add to repurposed materials list
-  };
+  const handleSubmit = async (repurposeData) => {
+  try {
+    const { db, auth } = require('../../config/firebase');
+    const { collection, addDoc, serverTimestamp } = require('firebase/firestore');
+    
+    const repurposedMaterialData = {
+      imageUri: selectedImage.uri,
+      createdAt: serverTimestamp(),
+      creatorName: auth.currentUser?.displayName || auth.currentUser?.email || 'Unknown User',
+      userId: auth.currentUser?.uid,
+      name: repurposeData.name,
+      type: repurposeData.type,
+      designStyle: repurposeData.designStyle
+    };
+
+    await addDoc(collection(db, 'repurposedMaterials'), repurposedMaterialData);
+    console.log('Repurposed material saved to database successfully!');
+  } catch (error) {
+    console.error('Error saving repurposed material:', error);
+  }
+};
 
   return (
     <View>
@@ -48,14 +66,13 @@ export default function RepurposeMaterialButton() {
         onImageSelected={handleImageSelected}
       />
 
-      <ImagePreviewModal
-        visible={showPreview}
-        onClose={handleClosePreview}
-        imageUri={selectedImage?.uri}
-        imageSource={imageSource}
-        imageType="repurpose"
-        onSubmit={handleSubmit}
-      />
+      <RepurposePreviewModal
+  visible={showPreview}
+  onClose={handleClosePreview}
+  imageUri={selectedImage?.uri}
+  imageSource={imageSource}
+  onSubmit={handleSubmit}
+/>
     </View>
   );
 }

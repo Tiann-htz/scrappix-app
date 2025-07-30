@@ -1,6 +1,7 @@
 // components/MainTabNavigator.js
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../auth/AuthContext';
 import SideDrawer from './SideDrawer';
 import DropdownMenu from './DropdownMenu';
@@ -12,10 +13,12 @@ export default function MainTabNavigator({ children }) {
   const [activeTab, setActiveTab] = useState('Home');
 
   const tabs = [
-    { name: 'Home', icon: '🏠' },
-    { name: 'Marketplace', icon: '🛒' },
-    { name: 'Chat', icon: '💬' },
-    { name: 'Tutorials', icon: '📚' },
+    { name: 'Home', icon: 'home' },
+    { name: 'Tutorials', icon: 'library' },
+    { name: 'Marketplace', icon: 'storefront' },
+    { name: 'Chat', icon: 'chatbubbles' },
+    { name: 'Disposal', icon: 'trash-bin' },
+    
   ];
 
   return (
@@ -26,16 +29,19 @@ export default function MainTabNavigator({ children }) {
           style={styles.menuButton}
           onPress={() => setShowSideDrawer(true)}
         >
-          <Text style={styles.menuIcon}>☰</Text>
+          <Ionicons name="menu" size={24} color="white" />
         </TouchableOpacity>
-
 
         <TouchableOpacity 
           style={styles.userButton}
           onPress={() => setShowDropdown(!showDropdown)}
         >
-          <Text style={styles.userName}>{user?.fullName}</Text>
-          <Text style={styles.userIcon}>👤</Text>
+          <View style={styles.userContainer}>
+            <Text style={styles.userName}>{user?.fullName}</Text>
+            <View style={styles.userIconContainer}>
+              <Ionicons name="person-circle" size={28} color="white" />
+            </View>
+          </View>
         </TouchableOpacity>
       </View>
 
@@ -55,12 +61,12 @@ export default function MainTabNavigator({ children }) {
             ]}
             onPress={() => setActiveTab(tab.name)}
           >
-            <Text style={[
-              styles.tabIcon,
-              activeTab === tab.name && styles.activeTabIcon
-            ]}>
-              {tab.icon}
-            </Text>
+            <Ionicons 
+              name={tab.icon} 
+              size={20} 
+              color={activeTab === tab.name ? '#28a745' : '#666'} 
+              style={styles.tabIcon}
+            />
             <Text style={[
               styles.tabText,
               activeTab === tab.name && styles.activeTabText
@@ -105,32 +111,32 @@ const styles = StyleSheet.create({
     backgroundColor: '#28a745',
     paddingHorizontal: 15,
     paddingTop: 50,
-    paddingBottom: 15,
+    paddingBottom: 10,
   },
   menuButton: {
     padding: 5,
   },
-  menuIcon: {
-    fontSize: 20,
-    color: 'white',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
-  },
   userButton: {
+    padding: 5,
+  },
+  userContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
   userName: {
     fontSize: 14,
     color: 'white',
     marginRight: 8,
     maxWidth: 80,
+    fontWeight: '500',
   },
-  userIcon: {
-    fontSize: 20,
+  userIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   content: {
     flex: 1,
@@ -141,7 +147,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#eee',
     paddingVertical: 10,
-    paddingBottom: 55, // Add more padding at bottom to lift it up
+    paddingBottom: 55,
   },
   tabItem: {
     flex: 1,
@@ -152,14 +158,10 @@ const styles = StyleSheet.create({
     // Active tab styling
   },
   tabIcon: {
-    fontSize: 20,
     marginBottom: 5,
   },
-  activeTabIcon: {
-    // You can add color changes here if needed
-  },
   tabText: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#666',
   },
   activeTabText: {

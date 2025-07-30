@@ -1,5 +1,4 @@
 // components/home/ScannedMaterialPreview.js
-import React from 'react';
 import {
   View,
   Text,
@@ -86,21 +85,34 @@ export default function ScannedMaterialPreview({ visible, onClose, material, onD
           </View>
 
           <View style={styles.infoContainer}>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Status:</Text>
-              <View style={styles.statusBadge}>
-                <Text style={styles.statusText}>{material.status}</Text>
+            <View style={styles.detailsCard}>
+              <Text style={styles.cardTitle}>Material Details</Text>
+              
+              <View style={styles.detailItem}>
+                <View style={styles.detailHeader}>
+                  <Ionicons name="checkmark-circle" size={18} color="#4CAF50" />
+                  <Text style={styles.detailLabel}>Status</Text>
+                </View>
+                <View style={styles.statusBadge}>
+                  <Text style={styles.statusText}>{material.status}</Text>
+                </View>
               </View>
-            </View>
 
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Scanned by:</Text>
-              <Text style={styles.value}>{material.uploaderName}</Text>
-            </View>
+              <View style={styles.detailItem}>
+                <View style={styles.detailHeader}>
+                  <Ionicons name="person" size={18} color="#666" />
+                  <Text style={styles.detailLabel}>Scanned by</Text>
+                </View>
+                <Text style={styles.detailValue}>{material.uploaderName}</Text>
+              </View>
 
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Date & Time:</Text>
-              <Text style={styles.value}>{formatDateTime(material.createdAt)}</Text>
+              <View style={[styles.detailItem, styles.lastDetailItem]}>
+                <View style={styles.detailHeader}>
+                  <Ionicons name="time" size={18} color="#666" />
+                  <Text style={styles.detailLabel}>Date & Time</Text>
+                </View>
+                <Text style={styles.detailValue}>{formatDateTime(material.createdAt)}</Text>
+              </View>
             </View>
           </View>
         </ScrollView>
@@ -154,37 +166,66 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   infoContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
-  infoRow: {
+  detailsCard: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 16,
+  },
+  detailItem: {
+    marginBottom: 12,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e9ecef',
+  },
+  lastDetailItem: {
+    marginBottom: 0,
+    paddingBottom: 0,
+    borderBottomWidth: 0,
+  },
+  detailHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
-    flexWrap: 'wrap',
+    marginBottom: 6,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginRight: 12,
-    minWidth: 80,
+  detailLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#495057',
+    marginLeft: 8,
   },
-  value: {
-    fontSize: 16,
-    color: '#666',
-    flex: 1,
+  detailValue: {
+    fontSize: 15,
+    color: '#212529',
+    lineHeight: 20,
   },
   statusBadge: {
     backgroundColor: '#4CAF50',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
   },
   statusText: {
     color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 13,
+    fontWeight: '600',
     textTransform: 'capitalize',
   },
 });

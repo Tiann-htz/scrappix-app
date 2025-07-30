@@ -1,4 +1,4 @@
-// components/home/ScannedMaterialCard.js
+// components/home/RepurposedMaterialCard.js
 import React, { useState } from 'react';
 import {
   View,
@@ -8,12 +8,12 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import ScannedMaterialPreview from './ScannedMaterialPreview';
+import RepurposedMaterialPreview from './RepurposedMaterialPreview';
 
 const { width } = Dimensions.get('window');
-const cardWidth = (width - 48) / 2;
+const cardWidth = (width - 48) / 2; // 2 cards per row with margins
 
-export default function ScannedMaterialCard({ material, onDelete }) {
+export default function RepurposedMaterialCard({ material, onDelete, onUpdate }) {
   const [showPreview, setShowPreview] = useState(false);
 
   const handleCardPress = () => {
@@ -40,20 +40,20 @@ export default function ScannedMaterialCard({ material, onDelete }) {
       <TouchableOpacity style={styles.card} onPress={handleCardPress}>
         <Image source={{ uri: material.imageUri }} style={styles.image} />
         <View style={styles.content}>
-          <View style={styles.statusContainer}>
-            <View style={styles.statusBadge}>
-              <Text style={styles.statusText}>{material.status}</Text>
-            </View>
+          <Text style={styles.nameText} numberOfLines={2}>{material.name}</Text>
+          <View style={styles.typeBadge}>
+            <Text style={styles.typeText}>{material.type}</Text>
           </View>
           <Text style={styles.dateText}>{formatDate(material.createdAt)}</Text>
         </View>
       </TouchableOpacity>
 
-      <ScannedMaterialPreview
+      <RepurposedMaterialPreview
         visible={showPreview}
         onClose={handleClosePreview}
         material={material}
         onDelete={onDelete}
+        onUpdate={onUpdate}
       />
     </View>
   );
@@ -85,17 +85,22 @@ const styles = StyleSheet.create({
   content: {
     padding: 12,
   },
-  statusContainer: {
-    marginBottom: 8,
+  nameText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 6,
+    minHeight: 34, // Ensures consistent height for 2 lines
   },
-  statusBadge: {
-    backgroundColor: '#4CAF50',
+  typeBadge: {
+    backgroundColor: '#FF9800',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
     alignSelf: 'flex-start',
+    marginBottom: 6,
   },
-  statusText: {
+  typeText: {
     color: '#fff',
     fontSize: 12,
     fontWeight: 'bold',

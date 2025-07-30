@@ -1,17 +1,44 @@
 // components/home/ScannedMaterialsContent.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { db } from '../../config/firebase';
+import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { auth } from '../../config/firebase';
+import ScannedMaterialCard from './ScannedMaterialCard';
 
 export default function ScannedMaterialsContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [scannedMaterials, setScannedMaterials] = useState([]);
 
   useEffect(() => {
-    // Simulate loading delay
     const timer = setTimeout(() => {
-      setIsLoading(false);
-      // For now, keep empty array until we implement actual data loading
-      setScannedMaterials([]);
+      const unsubscribe = onSnapshot(
+        query(
+          collection(db, 'scannedMaterials'),
+          where('userId', '==', auth.currentUser?.uid)
+        ),
+        (snapshot) => {
+          const materials = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          
+          const sortedMaterials = materials.sort((a, b) => {
+            const aTime = a.createdAt?.toMillis?.() || a.createdAt?.getTime?.() || 0;
+            const bTime = b.createdAt?.toMillis?.() || b.createdAt?.getTime?.() || 0;
+            return bTime - aTime;
+          });
+          
+          setScannedMaterials(sortedMaterials);
+          setIsLoading(false);
+        },
+        (error) => {
+          console.error('Error fetching scanned materials:', error);
+          setIsLoading(false);
+        }
+      );
+
+      return unsubscribe;
     }, 1500);
 
     return () => clearTimeout(timer);
@@ -20,10 +47,6 @@ export default function ScannedMaterialsContent() {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Scanned Materials</Text>
-        <Text style={styles.subtitle}>
-          Your scanned materials will appear here
-        </Text>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#4CAF50" />
           <Text style={styles.loadingText}>Loading your scanned materials...</Text>
@@ -35,10 +58,6 @@ export default function ScannedMaterialsContent() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Scanned Materials</Text>
-        <Text style={styles.subtitle}>
-          Your scanned materials will appear here
-        </Text>
         {scannedMaterials.length === 0 ? (
           <View style={styles.placeholder}>
             <Text style={styles.placeholderText}>
@@ -46,9 +65,16 @@ export default function ScannedMaterialsContent() {
             </Text>
           </View>
         ) : (
-          // Future: Display scanned materials list
-          <View>
-            {/* Materials will be displayed here */}
+          <View style={styles.materialsGrid}>
+            {scannedMaterials.map((material) => (
+              <ScannedMaterialCard
+                key={material.id}
+                material={material}
+                onDelete={(materialId) => {
+                  setScannedMaterials(prev => prev.filter(m => m.id !== materialId));
+                }}
+              />
+            ))}
           </View>
         )}
       </View>
@@ -62,17 +88,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 20,
   },
   loadingContainer: {
     flex: 1,
@@ -97,5 +112,11 @@ const styles = StyleSheet.create({
     color: '#999',
     textAlign: 'center',
     lineHeight: 24,
+  },
+  materialsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
   },
 });
